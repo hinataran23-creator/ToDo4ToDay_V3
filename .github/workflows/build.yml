@@ -33,9 +33,9 @@ jobs:
           unzip -o source.zip -d app
 
       - name: Generate Android project
-        working-directory: app
-        run: flutter create . --platforms=android --org com.rtna.todo4today
-
+        run: |
+          flutter create --project-name todo4today --org com.rtna.todo4today --platforms=android temp_app
+          cp -R temp_app/android app/android
       - name: Set application name
         run: |
           sed -i 's/android:label="todo4today"/android:label="ToDo4ToDay"/' app/android/app/src/main/AndroidManifest.xml
