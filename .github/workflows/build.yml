@@ -40,11 +40,9 @@ jobs:
         run: |
           sed -i 's/android:label="todo4today"/android:label="ToDo4ToDay"/' app/android/app/src/main/AndroidManifest.xml
 
-      - name: Install dependencies and generate launcher icon
+      - name: Install dependencies
         working-directory: app
-        run: |
-          flutter pub get
-          dart run flutter_launcher_icons
+        run: flutter pub get
 
       - name: Build APK
         working-directory: app
