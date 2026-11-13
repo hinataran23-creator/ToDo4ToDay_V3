@@ -1,0 +1,57 @@
+name: Build ToDo4ToDay APK
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'source.zip'
+      - '.github/workflows/build.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Extract project ZIP
+        run: |
+          mkdir -p app
+          unzip -o source.zip -d app
+
+      - name: Generate Android project
+        working-directory: app
+        run: flutter create . --platforms=android --org com.rtna.todo4today
+
+      - name: Set application name
+        run: |
+          sed -i 's/android:label="todo4today"/android:label="ToDo4ToDay"/' app/android/app/src/main/AndroidManifest.xml
+
+      - name: Install dependencies and generate launcher icon
+        working-directory: app
+        run: |
+          flutter pub get
+          dart run flutter_launcher_icons
+
+      - name: Build APK
+        working-directory: app
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ToDo4ToDay-APK
+          path: app/build/app/outputs/flutter-apk/app-release.apk
